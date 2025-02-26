@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="NHotkey.Wpf" Version="3.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="9.0.2" />
   </ItemGroup>
 
 </Project>
