@@ -1,24 +1,18 @@
-﻿using System.Text;
+﻿using System;
+using System.Runtime.InteropServices;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 using NHotkey;
 using NHotkey.Wpf;
 
 namespace src;
 
-/// <summary>
-/// Interaction logic for MainWindow.xaml
-/// </summary>
-
 public partial class MainWindow : Window
 {
+    // Windows API の GetCursorPos を呼び出す
+    [DllImport("user32.dll")]
+    private static extern bool GetCursorPos(out System.Drawing.Point lpPoint);
+
     public MainWindow()
     {
         InitializeComponent();
@@ -29,6 +23,12 @@ public partial class MainWindow : Window
 
     private void OnZoomShortcut(object sender, HotkeyEventArgs e)
     {
-        MessageBox.Show("ショートカットキーが押されました！", "通知", MessageBoxButton.OK, MessageBoxImage.Information);
+        System.Drawing.Point cursorPos;
+        GetCursorPos(out cursorPos);
+
+        MessageBox.Show($"マウスの位置: X={cursorPos.X}, Y={cursorPos.Y}",
+            "マウス座標",
+            MessageBoxButton.OK,
+            MessageBoxImage.Information);
     }
 }
