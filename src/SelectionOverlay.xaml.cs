@@ -20,11 +20,12 @@ public partial class SelectionOverlay : Window
     public SelectionOverlay()
     {
         InitializeComponent();
+        this.KeyDown += OnKeyDown;  // **ESCキーを検知**
     }
 
     private void Canvas_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        startPoint = e.GetPosition(this);
+        startPoint = e.GetPosition(SelectionCanvas);
         SelectionRectangle.Width = 0;
         SelectionRectangle.Height = 0;
         SelectionRectangle.Visibility = Visibility.Visible;
@@ -35,7 +36,7 @@ public partial class SelectionOverlay : Window
     {
         if (!isSelecting) return;
 
-        var currentPoint = e.GetPosition(this);
+        var currentPoint = e.GetPosition(SelectionCanvas);
         double x = Math.Min(startPoint.X, currentPoint.X);
         double y = Math.Min(startPoint.Y, currentPoint.Y);
         double width = Math.Abs(startPoint.X - currentPoint.X);
@@ -50,10 +51,9 @@ public partial class SelectionOverlay : Window
     private void Canvas_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
         isSelecting = false;
-        var endPoint = e.GetPosition(this);
+        var endPoint = e.GetPosition(SelectionCanvas);
         this.Hide();
 
-        // **ウィンドウ内座標をスクリーン座標に変換**
         var screenStart = this.PointToScreen(startPoint);
         var screenEnd = this.PointToScreen(endPoint);
 
@@ -68,19 +68,35 @@ public partial class SelectionOverlay : Window
 
     private void CaptureSelectedArea(int x, int y, int width, int height)
     {
+        string filePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "selected_screenshot.png");
+
         using (Bitmap bitmap = new Bitmap(width, height))
         {
             using (Graphics g = Graphics.FromImage(bitmap))
             {
                 g.CopyFromScreen(x, y, 0, 0, new System.Drawing.Size(width, height));
             }
-
-            string filePath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "selected_screenshot.png");
             bitmap.Save(filePath, ImageFormat.Png);
-            MessageBox.Show($"選択範囲のスクリーンショットを保存しました:\n{filePath}",
-                "キャプチャ完了",
-                MessageBoxButton.OK,
-                MessageBoxImage.Information);
+        }
+
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            PreviewWindow preview = new PreviewWindow(filePath);
+            preview.ShowDialog();
+        });
+
+        // MessageBox.Show($"選択範囲のスクリーンショットを保存しました:\n{filePath}",
+        //     "キャプチャ完了",
+        //     MessageBoxButton.OK,
+        //     MessageBoxImage.Information);
+    }
+
+    // **ESCキーでアプリを終了**
+    private void OnKeyDown(object sender, KeyEventArgs e)
+    {
+        if (e.Key == Key.Escape)
+        {
+            Application.Current.Shutdown();
         }
     }
 }
