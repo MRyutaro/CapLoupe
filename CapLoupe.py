@@ -9,7 +9,7 @@ from PIL import Image, ImageGrab, ImageTk
 from pystray import Icon
 from pystray import MenuItem as Item
 
-import icon
+import docs.icon as icon
 
 
 class ScreenshotViewer(tk.Toplevel):
