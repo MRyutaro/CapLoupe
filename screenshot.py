@@ -24,7 +24,8 @@ def on_mouse_drag(event):
     else:
         x2, y2 = event.x, event.y
         canvas.delete("selection")  # 前の選択枠を削除
-        canvas.create_rectangle(x1, y1, x2, y2, outline='red', width=2, tags="selection")
+        canvas.create_rectangle(
+            x1, y1, x2, y2, outline='red', width=2, tags="selection")
 
 
 def on_mouse_release(event):
@@ -33,13 +34,13 @@ def on_mouse_release(event):
     root.quit()
 
 
-def capture_screenshot(save_path='screenshot.jpg'):
+def capture_screenshot():
     global x1, y1, x2, y2, root, canvas, selecting
 
     # GUIで範囲指定（透過ウィンドウ設定）
     root = tk.Tk()
     root.attributes("-fullscreen", True)
-    root.attributes("-alpha", 0.3)  # ウィンドウの透明度（0.0 〜 1.0）
+    root.attributes("-alpha", 0.3)  # 透明度設定（0.0 〜 1.0）
     root.attributes("-topmost", True)  # 常に最前面
     root.overrideredirect(True)  # 枠を非表示
     root.config(bg='')  # 背景透明化
@@ -55,17 +56,24 @@ def capture_screenshot(save_path='screenshot.jpg'):
     root.mainloop()
     root.destroy()
 
+    filename = "screenshot.jpg"
+
     # 指定範囲をキャプチャ
     img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
     new_img = pil2cv(img)
 
     # ファイルに保存
-    cv2.imwrite(save_path, new_img)
-    print(f'Screenshot saved as {save_path}')
+    cv2.imwrite(filename, new_img)
+    print(f'Screenshot saved as {filename}')
+
+    # 撮影したスクリーンショットを表示
+    cv2.imshow("Captured Image", new_img)
+    cv2.waitKey(0)
+    cv2.destroyAllWindows()
 
 
 def main():
-    capture_screenshot('captured_area.jpg')
+    capture_screenshot()
 
 
 if __name__ == "__main__":
