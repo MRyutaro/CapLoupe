@@ -24,6 +24,8 @@ class ScreenshotViewer(tk.Toplevel):
         self.bind("<Button-1>", self.mouse_down_left)
         self.protocol("WM_DELETE_WINDOW", self.on_close)  # 閉じるボタンの動作を設定
 
+        self.bind_all("<Escape>", lambda event: self.on_close())  # ESCキーで閉じる
+
         self.update_idletasks()  # ウィンドウの描画を確実に更新
         self.draw_image()  # 初期画像を描画
 
@@ -101,8 +103,10 @@ def capture_screenshot():
     canvas.pack(fill=tk.BOTH, expand=True)
 
     selecting = False
+    coords_set = False  # 選択範囲が確定したかのフラグ
 
     def on_mouse_drag(event):
+        nonlocal coords_set
         global x1, y1, x2, y2, selecting
         if not selecting:
             x1, y1 = event.x, event.y
@@ -111,14 +115,25 @@ def capture_screenshot():
             x2, y2 = event.x, event.y
             canvas.delete("selection")
             canvas.create_rectangle(
-                x1, y1, x2, y2, outline='red', width=2, tags="selection")
+                x1, y1, x2, y2, outline='red', width=2, tags="selection"
+            )
 
     def on_mouse_release(event):
+        nonlocal coords_set
         global selecting, x1, y1, x2, y2
         selecting = False
         x1, x2 = min(x1, x2), max(x1, x2)
         y1, y2 = min(y1, y2), max(y1, y2)
+        coords_set = True
         root.quit()
+
+    def on_escape(event):
+        root.quit()
+        select_window.destroy()
+        nonlocal coords_set
+        coords_set = False  # ESCが押されたことを示す
+
+    root.bind_all("<Escape>", on_escape)  # ESCキーでキャンセル
 
     canvas.bind("<ButtonPress-1>", on_mouse_drag)
     canvas.bind("<B1-Motion>", on_mouse_drag)
@@ -126,6 +141,9 @@ def capture_screenshot():
 
     root.mainloop()
     select_window.destroy()
+
+    if not coords_set:
+        return  # ESCキーが押されたら関数を即終了
 
     img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
     img = img.resize((img.width * 2, img.height * 2), Image.LANCZOS)
