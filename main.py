@@ -16,6 +16,7 @@ class ScreenshotViewer(tk.Toplevel):
         self.canvas = tk.Canvas(self, background="#333")
         self.canvas.pack(fill=tk.BOTH, expand=True)
 
+        self.image = None  # 画像オブジェクトの初期化
         self.draw_image()
 
         self.bind("<B1-Motion>", self.mouse_move_left)
@@ -23,12 +24,19 @@ class ScreenshotViewer(tk.Toplevel):
         self.bind("<Button-1>", self.mouse_down_left)
         self.protocol("WM_DELETE_WINDOW", self.on_close)  # 閉じるボタンの動作を設定
 
+        self.update_idletasks()  # ウィンドウの描画を確実に更新
+        self.draw_image()  # 初期画像を描画
+
     def draw_image(self):
         if self.pil_image is None:
             return
 
         canvas_width = self.canvas.winfo_width()
         canvas_height = self.canvas.winfo_height()
+
+        if canvas_width == 1 or canvas_height == 1:
+            self.after(100, self.draw_image)  # キャンバスサイズが確定するまで再試行
+            return
 
         mat_inv = np.linalg.inv(self.mat_affine)
         dst = self.pil_image.transform(
@@ -43,8 +51,10 @@ class ScreenshotViewer(tk.Toplevel):
         self.canvas.create_image(0, 0, anchor='nw', image=self.image)
 
     def mouse_move_left(self, event):
-        self.translate(event.x - self.__old_event.x,
-                       event.y - self.__old_event.y)
+        self.translate(
+            event.x - self.__old_event.x,
+            event.y - self.__old_event.y
+        )
         self.__old_event = event
         self.draw_image()
 
