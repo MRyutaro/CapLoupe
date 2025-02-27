@@ -1,5 +1,5 @@
-# hello-windows-app
+# CapLoupe
 
-## 参考記事
-
-https://imagingsolution.net/program/python/tkinter/python_tkinter_image_viewer/#google_vignette
+<p align="center">
+  <img src="/docs/cap_loupe.png" alt="SnapNoteClip Logo" width="50%">
+</p>
