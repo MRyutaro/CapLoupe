@@ -1,17 +1,22 @@
+import io
 import os
 import threading
 import tkinter as tk
-import numpy as np
+
 import keyboard
-from PIL import ImageGrab, Image, ImageTk
-from pystray import MenuItem as Item, Icon
+import numpy as np
+from PIL import Image, ImageGrab, ImageTk
+from pystray import Icon
+from pystray import MenuItem as Item
+
+import icon
 
 
 class ScreenshotViewer(tk.Toplevel):
     def __init__(self, img, root):
         super().__init__()
         self.root = root
-        self.title("Captured Image")
+        self.title("CapLoupe")
         self.geometry(f"{img.width}x{img.height}")
 
         self.pil_image = img
@@ -179,11 +184,18 @@ def on_quit(icon, item):
     os._exit(0)
 
 
+def bytes_to_image(byte_list):
+    """ バイトリストを PIL.Image に変換する """
+    image_stream = io.BytesIO(bytes(byte_list))
+    return Image.open(image_stream)
+
+
 def create_tray_icon():
-    image = Image.new("RGB", (64, 64), (255, 0, 0))
+    tray_image = bytes_to_image(icon.cap_loupe_image)  # `icon` モジュールの変数を参照
     menu = (Item("終了", on_quit),)
-    icon = Icon("screenshot_tool", image, menu=menu)
-    icon.run()
+    tray_icon = Icon("screenshot_tool", tray_image, menu=menu)  # 変数名を `tray_icon` に変更
+    tray_icon.title = "CapLoupe"  # カーソルを合わせたときに表示されるツールチップ
+    tray_icon.run()
 
 
 if __name__ == "__main__":
