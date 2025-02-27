@@ -56,15 +56,14 @@ def capture_screenshot():
     root.mainloop()
     root.destroy()
 
-    filename = "screenshot.jpg"
-
     # 指定範囲をキャプチャ
     img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
     new_img = pil2cv(img)
 
-    # ファイルに保存
-    cv2.imwrite(filename, new_img)
-    print(f'Screenshot saved as {filename}')
+    # 画像を2倍のサイズにリサイズ
+    height, width = new_img.shape[:2]
+    new_img = cv2.resize(
+        new_img, (width * 2, height * 2), interpolation=cv2.INTER_LINEAR)
 
     # 撮影したスクリーンショットを表示
     cv2.imshow("Captured Image", new_img)
