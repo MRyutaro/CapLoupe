@@ -484,3 +484,7 @@ $RECYCLE.BIN/
 *.swp
 
 *.png
+
+.venv
+dist
+build
