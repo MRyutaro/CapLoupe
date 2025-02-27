@@ -170,7 +170,7 @@ def capture_screenshot():
 
 
 def listen_for_shortcut():
-    keyboard.add_hotkey("windows+ctrl+e", capture_screenshot)
+    keyboard.add_hotkey("shift+alt+z", capture_screenshot)
     keyboard.wait()
 
 
