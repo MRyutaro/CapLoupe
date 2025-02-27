@@ -23,29 +23,32 @@ def on_mouse_drag(event):
         selecting = True
     else:
         x2, y2 = event.x, event.y
-        canvas.delete("selection")  # 前の選択枠を削除
+        canvas.delete("selection")
         canvas.create_rectangle(
             x1, y1, x2, y2, outline='red', width=2, tags="selection")
 
 
 def on_mouse_release(event):
-    global selecting
+    global selecting, x1, y1, x2, y2
     selecting = False
+    # 座標を整理（左上が (x1, y1), 右下が (x2, y2) になるように）
+    x1, x2 = min(x1, x2), max(x1, x2)
+    y1, y2 = min(y1, y2), max(y1, y2)
+    root.withdraw()
     root.quit()
 
 
 def capture_screenshot():
     global x1, y1, x2, y2, root, canvas, selecting
 
-    # GUIで範囲指定（透過ウィンドウ設定）
     root = tk.Tk()
     root.attributes("-fullscreen", True)
-    root.attributes("-alpha", 0.3)  # 透明度設定（0.0 〜 1.0）
-    root.attributes("-topmost", True)  # 常に最前面
-    root.overrideredirect(True)  # 枠を非表示
-    root.config(bg='')  # 背景透明化
+    root.attributes("-alpha", 0.3)  # 透明度設定
+    root.attributes("-topmost", True)
+    root.overrideredirect(True)
+    root.config(bg='black')  # 背景を暗くする
 
-    canvas = tk.Canvas(root, cursor="cross", bg='black')  # 背景色を暗くして選択しやすくする
+    canvas = tk.Canvas(root, cursor="cross", bg='black')
     canvas.pack(fill=tk.BOTH, expand=True)
 
     selecting = False
@@ -65,7 +68,7 @@ def capture_screenshot():
     new_img = cv2.resize(
         new_img, (width * 2, height * 2), interpolation=cv2.INTER_LINEAR)
 
-    # 撮影したスクリーンショットを表示
+    # 拡大したスクリーンショットを表示
     cv2.imshow("Captured Image", new_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
