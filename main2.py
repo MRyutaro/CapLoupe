@@ -1,15 +1,100 @@
 import sys
 import threading
 import tkinter as tk
-
-import keyboard
 import numpy as np
-from PIL import Image, ImageGrab, ImageTk
-from pystray import Icon
-from pystray import MenuItem as Item
+import keyboard
+from PIL import ImageGrab, Image, ImageTk
+from pystray import MenuItem as Item, Icon
+
+
+class ScreenshotViewer(tk.Toplevel):
+    def __init__(self, img, root):
+        super().__init__()
+        self.root = root
+        self.title("Captured Image")
+        self.geometry(f"{img.width}x{img.height}")
+
+        self.pil_image = img
+        self.mat_affine = np.eye(3)
+
+        self.canvas = tk.Canvas(self, background="#333")
+        self.canvas.pack(fill=tk.BOTH, expand=True)
+
+        self.image = None
+        self.draw_image()
+
+        self.bind("<B1-Motion>", self.mouse_move_left)
+        self.bind("<MouseWheel>", self.mouse_wheel)
+        self.bind("<Button-1>", self.mouse_down_left)
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
+
+        self.bind_all("<Escape>", lambda event: self.on_close())  # ESCキーで閉じる
+
+        self.focus_force()  # フォーカスを強制的に取得
+        self.update_idletasks()
+        self.draw_image()
+
+    def draw_image(self):
+        if self.pil_image is None:
+            return
+
+        canvas_width = self.canvas.winfo_width()
+        canvas_height = self.canvas.winfo_height()
+
+        if canvas_width == 1 or canvas_height == 1:
+            self.after(100, self.draw_image)
+            return
+
+        mat_inv = np.linalg.inv(self.mat_affine)
+        dst = self.pil_image.transform(
+            (canvas_width, canvas_height),
+            Image.AFFINE,
+            tuple(mat_inv.flatten()),
+            Image.NEAREST,
+            fillcolor="#333"
+        )
+
+        self.image = ImageTk.PhotoImage(image=dst)
+        self.canvas.create_image(0, 0, anchor='nw', image=self.image)
+
+    def mouse_move_left(self, event):
+        self.translate(
+            event.x - self.__old_event.x,
+            event.y - self.__old_event.y
+        )
+        self.__old_event = event
+        self.draw_image()
+
+    def mouse_down_left(self, event):
+        self.__old_event = event
+
+    def mouse_wheel(self, event):
+        scale = 1.25 if event.delta > 0 else 0.8
+        self.scale_at(scale, event.x, event.y)
+        self.draw_image()
+
+    def translate(self, offset_x, offset_y):
+        mat = np.eye(3)
+        mat[0, 2] = float(offset_x)
+        mat[1, 2] = float(offset_y)
+        self.mat_affine = np.dot(mat, self.mat_affine)
+
+    def scale_at(self, scale, cx, cy):
+        self.translate(-cx, -cy)
+        mat = np.eye(3)
+        mat[0, 0] = scale
+        mat[1, 1] = scale
+        self.mat_affine = np.dot(mat, self.mat_affine)
+        self.translate(cx, cy)
+
+    def on_close(self):
+        self.destroy()
+        self.root.quit()
 
 
 def capture_screenshot():
+    global x1, y1, x2, y2, selecting
+
     root = tk.Tk()
     root.withdraw()
     select_window = tk.Toplevel(root)
@@ -23,11 +108,11 @@ def capture_screenshot():
     canvas.pack(fill=tk.BOTH, expand=True)
 
     selecting = False
-    coords_set = False
+    coords_set = False  # 選択範囲が確定したかのフラグ
 
     def on_mouse_drag(event):
-        nonlocal coords_set, selecting
-        global x1, y1, x2, y2
+        nonlocal coords_set
+        global x1, y1, x2, y2, selecting
         if not selecting:
             x1, y1 = event.x, event.y
             selecting = True
@@ -39,7 +124,8 @@ def capture_screenshot():
             )
 
     def on_mouse_release(event):
-        nonlocal coords_set, selecting, x1, y1, x2, y2
+        nonlocal coords_set
+        global selecting, x1, y1, x2, y2
         selecting = False
         x1, x2 = min(x1, x2), max(x1, x2)
         y1, y2 = min(y1, y2), max(y1, y2)
@@ -50,34 +136,28 @@ def capture_screenshot():
         root.quit()
         select_window.destroy()
         nonlocal coords_set
-        coords_set = False
+        coords_set = False  # ESCが押されたことを示す
 
-    root.bind_all("<Escape>", on_escape)
+    root.bind_all("<Escape>", on_escape)  # ESCキーでキャンセル
+
     canvas.bind("<ButtonPress-1>", on_mouse_drag)
     canvas.bind("<B1-Motion>", on_mouse_drag)
     canvas.bind("<ButtonRelease-1>", on_mouse_release)
+
+    # **ウィンドウにフォーカスを当てる**
+    select_window.focus_force()
+    select_window.after(100, lambda: select_window.focus_force())  # 念のため遅延適用
 
     root.mainloop()
     select_window.destroy()
 
     if not coords_set:
-        return
+        return  # ESCキーが押されたら関数を即終了
 
     img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
     img = img.resize((img.width * 2, img.height * 2), Image.LANCZOS)
-    show_screenshot(img)
 
-
-def show_screenshot(img):
-    viewer = tk.Toplevel()
-    viewer.title("Captured Image")
-    viewer.geometry(f"{img.width}x{img.height}")
-
-    tk_image = ImageTk.PhotoImage(img)
-    label = tk.Label(viewer, image=tk_image)
-    label.image = tk_image
-    label.pack()
-
+    viewer = ScreenshotViewer(img, root)
     viewer.mainloop()
 
 
