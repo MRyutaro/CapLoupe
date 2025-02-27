@@ -1,4 +1,4 @@
-import sys
+import os
 import threading
 import tkinter as tk
 import numpy as np
@@ -176,7 +176,7 @@ def listen_for_shortcut():
 
 def on_quit(icon, item):
     icon.stop()
-    sys.exit()
+    os._exit(0)
 
 
 def create_tray_icon():
