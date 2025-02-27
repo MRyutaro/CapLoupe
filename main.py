@@ -26,6 +26,8 @@ class ScreenshotViewer(tk.Toplevel):
 
         self.bind_all("<Escape>", lambda event: self.on_close())  # ESCキーで閉じる
 
+        self.focus_force()  # フォーカスを強制的に取得
+
         self.update_idletasks()  # ウィンドウの描画を確実に更新
         self.draw_image()  # 初期画像を描画
 
