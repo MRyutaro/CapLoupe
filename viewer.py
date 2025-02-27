@@ -1,6 +1,5 @@
 import os  # ディレクトリ操作用
 import tkinter as tk  # ウィンドウ作成用
-from tkinter import filedialog  # ファイルを開くダイアログ用
 
 import numpy as np  # アフィン変換行列演算用
 from PIL import Image, ImageTk  # 画像データ用
@@ -25,8 +24,13 @@ class Application(tk.Frame):
     def menu_open_clicked(self, event=None):
         # ファイル→開く
         filename = tk.filedialog.askopenfilename(
-            filetypes=[("Image file", ".bmp .png .jpg .tif"), ("Bitmap", ".bmp"),
-                       ("PNG", ".png"), ("JPEG", ".jpg"), ("Tiff", ".tif")],  # ファイルフィルタ
+            filetypes=[
+                ("Image file", ".bmp .png .jpg .tif"),
+                ("Bitmap", ".bmp"),
+                ("PNG", ".png"),
+                ("JPEG", ".jpg"),
+                ("Tiff", ".tif")
+            ],  # ファイルフィルタ
             initialdir=os.getcwd()  # カレントディレクトリ
         )
 
@@ -138,8 +142,10 @@ class Application(tk.Frame):
         ''' マウスの左ボタンをドラッグ '''
         if self.pil_image is None:
             return
-        self.translate(event.x - self.__old_event.x,
-                       event.y - self.__old_event.y)
+        self.translate(
+            event.x - self.__old_event.x,
+            event.y - self.__old_event.y
+        )
         self.redraw_image()  # 再描画
         self.__old_event = event
 
