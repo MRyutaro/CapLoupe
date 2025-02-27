@@ -9,7 +9,7 @@ from PIL import Image, ImageGrab, ImageTk
 from pystray import Icon
 from pystray import MenuItem as Item
 
-import docs.icon as icon
+import docs.cap_loupe as cap_loupe
 
 
 class ScreenshotViewer(tk.Toplevel):
@@ -191,7 +191,7 @@ def bytes_to_image(byte_list):
 
 
 def create_tray_icon():
-    tray_image = bytes_to_image(icon.cap_loupe_image)  # `icon` モジュールの変数を参照
+    tray_image = bytes_to_image(cap_loupe.bytes)  # `icon` モジュールの変数を参照
     menu = (Item("終了", on_quit),)
     tray_icon = Icon("screenshot_tool", tray_image, menu=menu)  # 変数名を `tray_icon` に変更
     tray_icon.title = "CapLoupe"  # カーソルを合わせたときに表示されるツールチップ
