@@ -1,8 +1,9 @@
-import tkinter as tk            # ウィンドウ作成用
+import os  # ディレクトリ操作用
+import tkinter as tk  # ウィンドウ作成用
 from tkinter import filedialog  # ファイルを開くダイアログ用
+
+import numpy as np  # アフィン変換行列演算用
 from PIL import Image, ImageTk  # 画像データ用
-import numpy as np              # アフィン変換行列演算用
-import os                       # ディレクトリ操作用
 
 
 class Application(tk.Frame):

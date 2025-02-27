@@ -1,10 +1,12 @@
 import sys
 import threading
-import keyboard
 import tkinter as tk
-from pystray import MenuItem as Item, Icon
-from PIL import Image, ImageTk
+
+import keyboard
 import pyscreenshot
+from PIL import Image, ImageTk
+from pystray import Icon
+from pystray import MenuItem as Item
 
 
 class MagnifierApp:

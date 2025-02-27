@@ -1,5 +1,6 @@
-from PIL import ImageGrab, Image, ImageTk
 import tkinter as tk
+
+from PIL import Image, ImageGrab, ImageTk
 
 
 def on_mouse_drag(event):

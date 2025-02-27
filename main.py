@@ -1,6 +1,7 @@
-from PIL import ImageGrab, Image, ImageTk
 import tkinter as tk
+
 import numpy as np
+from PIL import Image, ImageGrab, ImageTk
 
 
 class ScreenshotViewer(tk.Toplevel):

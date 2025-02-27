@@ -1,7 +1,8 @@
-from PIL import ImageGrab
-import numpy as np
-import cv2
 import tkinter as tk
+
+import cv2
+import numpy as np
+from PIL import ImageGrab
 
 
 def pil2cv(image):
