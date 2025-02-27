@@ -181,7 +181,7 @@ def capture_screenshot():
         return  # ESCキーが押されたら関数を即終了
 
     img = ImageGrab.grab(bbox=(x1, y1, x2, y2))
-    img = img.resize((img.width * 2, img.height * 2), Image.LANCZOS)
+    img = img.resize((img.width, img.height), Image.LANCZOS)
 
     viewer = ScreenshotViewer(img, root)
     viewer.mainloop()
@@ -207,8 +207,8 @@ def bytes_to_image(byte_list):
 def create_tray_icon():
     tray_image = bytes_to_image(cap_loupe.bytes)  # `icon` モジュールの変数を参照
     menu = (Item("終了", on_quit),)
-    tray_icon = Icon("screenshot_tool", tray_image,
-                     menu=menu)  # 変数名を `tray_icon` に変更
+    tray_icon = Icon(
+        "screenshot_tool", tray_image, menu=menu)  # 変数名を `tray_icon` に変更
     tray_icon.title = "CapLoupe"  # カーソルを合わせたときに表示されるツールチップ
     tray_icon.run()
 

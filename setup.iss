@@ -1,6 +1,6 @@
 [Setup]
 AppName=CapLoupe
-AppVersion=1.1.1
+AppVersion=1.1.2
 AppPublisher=MRyutaro
 AppPublisherURL=https://github.com/MRyutaro/CapLoupe
 DefaultDirName={commonpf}\CapLoupe
