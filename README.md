@@ -7,7 +7,7 @@
 「CapLoupe」はショートカットキーでスクリーンの任意の範囲を選択し、拡大・移動しながら詳細を確認できるWindows用拡大鏡ツールです。
 
 <p align="center">
-  <img src="/docs/cap_loupe.gif" alt="CapLoupe Animation" width="50%">
+  <img src="/docs/cap_loupe.gif" alt="CapLoupe Animation" width="100%">
 </p>
 
 ## インストール方法
