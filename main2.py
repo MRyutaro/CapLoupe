@@ -109,6 +109,7 @@ def capture_screenshot():
 
     selecting = False
     coords_set = False  # 選択範囲が確定したかのフラグ
+    x1 = y1 = x2 = y2 = None  # **x2, y2 を None で初期化**
 
     def on_mouse_drag(event):
         nonlocal coords_set
@@ -127,6 +128,13 @@ def capture_screenshot():
         nonlocal coords_set
         global selecting, x1, y1, x2, y2
         selecting = False
+
+        # **x2, y2 が None の場合、即終了**
+        if x2 is None or y2 is None:
+            root.quit()
+            select_window.destroy()
+            return
+
         x1, x2 = min(x1, x2), max(x1, x2)
         y1, y2 = min(y1, y2), max(y1, y2)
         coords_set = True
@@ -135,8 +143,7 @@ def capture_screenshot():
     def on_escape(event):
         root.quit()
         select_window.destroy()
-        nonlocal coords_set
-        coords_set = False  # ESCが押されたことを示す
+        # sys.exit()  # **プロセスを完全終了する**
 
     root.bind_all("<Escape>", on_escape)  # ESCキーでキャンセル
 
@@ -144,9 +151,10 @@ def capture_screenshot():
     canvas.bind("<B1-Motion>", on_mouse_drag)
     canvas.bind("<ButtonRelease-1>", on_mouse_release)
 
-    # **ウィンドウにフォーカスを当てる**
     select_window.focus_force()
-    select_window.after(100, lambda: select_window.focus_force())  # 念のため遅延適用
+    select_window.lift()
+    select_window.update_idletasks()
+    select_window.after(100, lambda: select_window.focus_force())
 
     root.mainloop()
     select_window.destroy()
