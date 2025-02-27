@@ -17,7 +17,20 @@ class ScreenshotViewer(tk.Toplevel):
         super().__init__()
         self.root = root
         self.title("CapLoupe")
-        self.geometry(f"{img.width}x{img.height}")
+
+        # 画像サイズ
+        img_width, img_height = img.width, img.height
+
+        # 画面の解像度を取得
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+
+        # 中央に配置するための座標を計算
+        x = (screen_width - img_width) // 2
+        y = (screen_height - img_height) // 2
+
+        # ウィンドウサイズと位置を設定
+        self.geometry(f"{img_width}x{img_height}+{x}+{y}")
 
         self.pil_image = img
         self.mat_affine = np.eye(3)
