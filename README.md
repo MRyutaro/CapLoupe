@@ -8,10 +8,22 @@
 
 ## インストール方法
 
+1. [ここ](https://github.com/MRyutaro/CapLoupe/releases)から最新のインストーラをダウンロードする。
+2. 管理者権限でインストーラを起動する。
+2. インストーラの手順通りにインストールする。
+
 ## 使い方
 
 1. `Shift+Alt+Z`を押した後、マウスで領域選択をする。
 2. ホイールで拡大・縮小したり、左クリック+マウス移動で移動をしたりすることで画像を確認する。
+
+## アンインストール方法
+
+1. 以下の画像の赤い枠の部分を選択した後CapLoupeのアイコンを右クリックし終了ボタンを押す。
+
+![uninstall.png](docs/uninstall.png)
+
+2. `C:\Program Files (x86)\CapLoupe\unins000.exe`を実行する。
 
 ## For Developers
 

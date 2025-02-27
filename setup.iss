@@ -1,9 +1,9 @@
 [Setup]
 AppName=CapLoupe
-AppVersion=1.0.0
+AppVersion=1.2.0
 AppPublisher=MRyutaro
 AppPublisherURL=https://github.com/MRyutaro/CapLoupe
-DefaultDirName={pf}\CapLoupe
+DefaultDirName={commonpf}\CapLoupe
 DefaultGroupName=CapLoupe
 OutputDir=.\output
 OutputBaseFilename=installer
@@ -11,6 +11,7 @@ Compression=lzma
 SolidCompression=yes
 SetupIconFile=.\docs\cap_loupe.ico
 DisableProgramGroupPage=yes
+PrivilegesRequired=lowest
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"

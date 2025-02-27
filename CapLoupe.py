@@ -188,8 +188,9 @@ def capture_screenshot():
 
 
 def listen_for_shortcut():
-    keyboard.add_hotkey("shift+alt+z", capture_screenshot)
-    keyboard.wait()
+    while True:
+        keyboard.wait("shift+alt+z")
+        capture_screenshot()
 
 
 def on_quit(icon, item):
@@ -206,7 +207,8 @@ def bytes_to_image(byte_list):
 def create_tray_icon():
     tray_image = bytes_to_image(cap_loupe.bytes)  # `icon` モジュールの変数を参照
     menu = (Item("終了", on_quit),)
-    tray_icon = Icon("screenshot_tool", tray_image, menu=menu)  # 変数名を `tray_icon` に変更
+    tray_icon = Icon("screenshot_tool", tray_image,
+                     menu=menu)  # 変数名を `tray_icon` に変更
     tray_icon.title = "CapLoupe"  # カーソルを合わせたときに表示されるツールチップ
     tray_icon.run()
 
